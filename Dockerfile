@@ -17,15 +17,18 @@
 # ENTRYPOINT ["nginx", "-g", "daemon off;"]
 
 
-
 # Step 1: Build React app
 FROM node:16.17.0-alpine AS builder
 
 WORKDIR /app
 
-# Copy dependencies
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+# Copy dependency files if present
+COPY package.json ./
+# Try copying yarn.lock if exists (ignore errors)
+COPY yarn.lock* package-lock.json* ./
+
+# Install dependencies
+RUN yarn install || npm install
 
 # Copy all source files
 COPY . .
@@ -34,7 +37,7 @@ COPY . .
 ARG TMDB_V3_API_KEY
 ENV VITE_APP_TMDB_V3_API_KEY=${TMDB_V3_API_KEY}
 ENV VITE_APP_API_ENDPOINT_URL="https://api.themoviedb.org/3"
-RUN yarn build
+RUN yarn build || npm run build
 
 # Step 2: Serve with Nginx
 FROM nginx:stable-alpine
@@ -47,3 +50,4 @@ EXPOSE 80
 
 # Run Nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]
+
