@@ -12,7 +12,9 @@ pipeline {
             steps {
                 sh '''
                     docker rmi -f netflix-clone:latest || true
-                    docker build -t netflix-clone:latest -f /var/lib/jenkins/workspace/netflix-clone-react-typescript/Dockerfile /var/lib/jenkins/workspace/netflix-clone-react-typescript
+                    docker build --pull --no-cache -t netflix-clone:latest \
+                    -f /var/lib/jenkins/workspace/netflix/Dockerfile \
+                    /var/lib/jenkins/workspace/netflix
                 '''
             }
         }
@@ -20,7 +22,8 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 sh '''
-                    docker rm -f netflix-clone || true
+                    docker stop netflix-clone || true
+                    docker rm netflix-clone || true
                     docker run -d --name netflix-clone -p 3000:8080 netflix-clone:latest
                 '''
             }
