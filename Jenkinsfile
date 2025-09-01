@@ -12,9 +12,7 @@ pipeline {
             steps {
                 sh '''
                     docker rmi -f netflix-clone:latest || true
-                    docker build --pull --no-cache -t netflix-clone:latest \
-                    -f /var/lib/jenkins/workspace/netflix/Dockerfile \
-                    /var/lib/jenkins/workspace/netflix
+                    docker build -t netnetflix-clone:latest .
                 '''
             }
         }
