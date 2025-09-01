@@ -12,7 +12,7 @@ pipeline {
             steps {
                 sh '''
                     docker rmi -f netflix-clone:latest || true
-                    docker build -t netflix-clone:latest .
+                    docker build -t netflix-clone:latest -f /var/lib/jenkins/workspace/netflix-clone-react-typescript/Dockerfile /var/lib/jenkins/workspace/netflix-clone-react-typescript
                 '''
             }
         }
