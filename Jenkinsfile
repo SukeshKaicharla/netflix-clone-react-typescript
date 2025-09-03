@@ -6,7 +6,8 @@ pipeline {
         IMAGE_NAME      = "netflix-clone"
         IMAGE_TAG       = "latest"
         CONTAINER_NAME  = "netflix-container"
-        HOST_PORT       = "3000"   // host port where you want to access app
+        HOST_PORT       = "3000"
+        DOCKERHUB_REPO  = "yuvakishor/yuva"
     }
 
     stages {
@@ -25,7 +26,7 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run Docker Container (Local Test)') {
             steps {
                 sh '''
                     docker rm -f ${CONTAINER_NAME} || true
@@ -33,6 +34,18 @@ pipeline {
                 '''
             }
         }
+         
+        stage('Docker Hub Login & Push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${DOCKERHUB_REPO}:${IMAGE_TAG}
+                        docker push ${DOCKERHUB_REPO}:${IMAGE_TAG}
+                        docker logout
+                    '''
+                }
+            }
+        }
     }
 }
-
