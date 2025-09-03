@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                    git branch: 'main', url: 'https://github.com/SukeshKaicharla/netflix-clone-react-typescript.git'
+                    git branch: 'main', url: 'https://github.com/yuvakishor123/netflix-clone-react-typescript.git'
                 }
             }
 
